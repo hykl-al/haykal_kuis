@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -11,6 +12,19 @@ class _LoginPageState extends State<LoginPage> {
   String username = "";
   String password = "";
   bool isLoginSuccess = false;
+  bool isShown = false;
+
+  _navigateToHome() async {
+    await Future.delayed(Duration(seconds: 3), () {});
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(
+          username: username,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +70,10 @@ class _LoginPageState extends State<LoginPage> {
           });
         },
         decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.person_outline,
+            color: Colors.purple,
+          ),
           hintText: 'Masukkan Username',
           contentPadding: const EdgeInsets.all(8.0),
           border: const OutlineInputBorder(
@@ -76,13 +94,25 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: TextFormField(
         enabled: true,
-        obscureText: true, // Ensures password is obscured
         onChanged: (value) {
           setState(() {
             password = value;
           });
         },
+        obscureText: isShown ? false : true,
         decoration: InputDecoration(
+          prefixIcon: Icon(Icons.lock_outline, color: Colors.purple),
+          suffixIcon: IconButton(
+            onPressed: () {
+              setState(() {
+                isShown = !isShown;
+              });
+            },
+            icon: Icon(
+              isShown ? Icons.visibility : Icons.visibility_off,
+              color: Colors.purple,
+            ),
+          ),
           hintText: 'Masukkan Kata sandi',
           contentPadding: const EdgeInsets.all(8.0),
           border: const OutlineInputBorder(
@@ -103,27 +133,29 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       width: MediaQuery.of(context).size.width,
       child: ElevatedButton(
+        child:
+            const Text("Login Button", style: TextStyle(color: Colors.white)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.purple,
+        ),
         onPressed: () {
-          String text = "";
           if (username == "Haykal Aliando Usmansyah" && password == "1234") {
-            setState(() {
-              text = "Login Berhasil";
-              isLoginSuccess = true;
-            });
-          } else {
-            setState(() {
-              text = "Login Gagal";
-              isLoginSuccess = false;
-            });
-          }
-          print("isLoginSuccess : $isLoginSuccess");
+            _navigateToHome();
+            print("isLoginSuccess : $isLoginSuccess");
 
-          SnackBar snackBar = SnackBar(
-            content: Text('Selamat Datang! $username'),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            SnackBar snackBar = SnackBar(
+              content: Text('Selamat Datang! $username'),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            print("isLoginSuccess : $isLoginSuccess");
+
+            SnackBar snackBar = SnackBar(
+              content: Text('Login Gagal'),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
         },
-        child: const Text('Login'),
       ),
     );
   }
